@@ -16,5 +16,5 @@
     { "keys": ["ctrl+shift+alt+1"], "command": "fold_fold_depth", "args": {"depth": 1} },
     { "keys": ["ctrl+shift+alt+2"], "command": "fold_fold_depth", "args": {"depth": 2} },
     { "keys": ["ctrl+shift+alt+3"], "command": "fold_fold_depth", "args": {"depth": 3} },
-    { "keys": ["ctrl+shift+alt+delete"], "command": "fold_delete_double_empty_lines" },
+    { "keys": ["ctrl+shift+alt+delete"], "command": "fold_delete_double_empty_lines" }
 ]
