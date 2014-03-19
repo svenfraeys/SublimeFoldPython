@@ -6,6 +6,7 @@
 # Intelligent Folding System for Python
 #
 # author : sven.fr
+# svenfraeys.com
 #
 #
 ############
