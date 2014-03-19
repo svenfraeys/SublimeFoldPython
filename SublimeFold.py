@@ -1,13 +1,10 @@
 ############
 #
-#
 # SublimeFold
 # 
 # Intelligent Folding System for Python
 #
 # author : sven.fr
-# svenfraeys.com
-#
 #
 ############
 import sublime, sublime_plugin
