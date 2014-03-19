@@ -2,9 +2,10 @@
 #
 # SublimeFold
 # 
-# An easy to use folding sytem for python code
+# Intelligent Folding System for Python
 #
 # author : sven.fr
+#
 #
 ############
 import sublime, sublime_plugin
