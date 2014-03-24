@@ -5,8 +5,6 @@
 You can fold, navigate, extend python code in a very fast and easy way.
 instant fold all methods, leaving docstrings visible, extending your current code.
 
-More information in how to use will come soon
-
 ## Features
 * Folding code, fold and unfold contents where the cursor exists
 * Smart selecting, selecting needed pieces of code
