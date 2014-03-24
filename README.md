@@ -33,3 +33,8 @@ keycombo to use : Ctrl+Alt+Shift+Key
 * Ctrl+Alt+Shift+1 : Fold to depth 1 starting from selection
 * Ctrl+Alt+Shift+2 : Fold to depth 2 starting from selection
 * Ctrl+Alt+Shift+N : Create a new sibling starting from selection
+
+## Settings
+you can edit Key Binding and Settings in `Preferences > Package Settings > Fold Python` 
+
+`fold_getters_setters` : fold getter and matching setter together as one
