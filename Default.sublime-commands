@@ -1,0 +1,32 @@
+[
+    {
+        "caption": "Preferences: Fold Python Settings",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/SublimeFoldPython/FoldPython.sublime-settings"}
+        },
+    {
+        "caption": "Preferences: Fold Python Key Bindings",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/SublimeFoldPython/Default (Windows).sublime-keymap",
+            "platform": "Windows"
+        }
+    },
+    {
+        "caption": "Preferences: Fold Python Key Bindings",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/SublimeFoldPython/Default (OSX).sublime-keymap",
+            "platform": "OSX"
+        }
+    },
+    {
+        "caption": "Preferences: Fold Python Key Bindings",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/SublimeFoldPython/Default (Linux).sublime-keymap",
+            "platform": "Linux"
+        }
+    }
+]

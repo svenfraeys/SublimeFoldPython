@@ -16,74 +16,63 @@ def log(message,verbose=1):
     '''
     if verbose <= VERBOSE:
         print('%s:%s' % (verbose, message) )
-
-def all_lines(view):
-    '''return all lines in given view
+    
+def fold_getters_setters():
+    '''return if the fold getters and setters is active or not
     '''
-    totalRegion = sublime.Region( 0, view.size() )
-    lineRegions = view.lines(totalRegion)
-    lines = []
+    settings = sublime.load_settings("FoldPython.sublime-settings")
+    return settings.get('fold_getters_setters')
 
-    for lineRegion in lineRegions:
-        line = FLine(view, lineRegion)
-        lines.append(line)
-
-    return lines
-
-class FLine():
+class FLine(object):
     '''line in sublime
     '''
-    def __init__(self, view, region):
+    def __init__(self, view=None, region=None):
         '''initiates the line extracter
         '''
-        tabSize = view.settings().get("tab_size")
-        tabsToSpaces = view.settings().get("translate_tabs_to_spaces")
         self._tabString = None
-
-        if tabsToSpaces:
-            self._tabString = ' ' * tabSize
-        else:
-            self._tabString = '\t'
-
         self._view = view
         self._region = region
-        
+
+        if view:
+            tabSize = view.settings().get("tab_size")
+            tabsToSpaces = view.settings().get("translate_tabs_to_spaces")
+
+            if tabsToSpaces:
+                self._tabString = ' ' * tabSize
+            else:
+                self._tabString = '\t'
+
+    #attributes
+    def data(self):
+        '''get data
+        '''
+        dataDict = {}
+        dataDict["view"] = self.view()
+        dataDict["region"] = self.region()
+        dataDict["tabString"] = self.tabString()
+        return dataDict
+    
+    def setData(self, dataDict):
+        '''set data
+        '''
+        self.setView( dataDict["view"] )
+        self.setRegion( dataDict["region"] )
+        self.setTabString( dataDict["tabString"] )
+    
     def tabString(self):
         '''return the tabString
         '''
         return self._tabString
 
-    def toClass(self):
-        '''go to the class
-        '''
-        pass
-
-    def toMethod(self):
-        '''go to the method
-        '''
-        pass
-
-    def isClass(self):
-        '''check if this is class definition
-        '''
-        if self.lineString().find('class ') != -1:
-            return True
-        return False
-
-    def isEmpty(self):
-        '''check if it is empty line
-        '''
-        if self.lineString().strip() == '':
-            return True
-        else:
-            return False
+    def setTabString(self, value):
+        self._tabString = value
 
     def region(self):
         '''get region
         '''
         return self._region
-    
-    def set(self, value):
+
+    def setRegion(self, value):
         '''set region
         '''
         self._region = value
@@ -97,6 +86,15 @@ class FLine():
         '''set view
         '''
         self._view = value
+
+    # methods
+    def isEmpty(self):
+        '''check if it is empty line
+        '''
+        if self.lineString().strip() == '':
+            return True
+        else:
+            return False
 
     def spaceDepth(self):
         '''return the depth of the selected line
@@ -260,6 +258,7 @@ class FLine():
         '''return the children
         '''
         depth = self.depth()
+
         linedownDepth = None
         lineDown = self
         loop = True
@@ -500,6 +499,177 @@ class FLine():
         if start and end:
             return sublime.Region(start, end)
 
+class FPythonLine(FLine):
+    """a python line with smarter analyze function of its task in the file"""
+
+    # constants
+    TYPE_CLASS = "type_class"
+    TYPE_EMPTY = "type_empty"
+    TYPE_DEFINITION = "type_definition"
+
+    # methods
+    def toClass(self):
+        '''go to the class
+        '''
+        pass
+
+    def toMethod(self):
+        '''go to the method
+        '''
+        pass
+
+    def isClass(self):
+        '''check if this is class definition
+        '''
+        if self.lineString().find('class ') != -1:
+            return True
+        return False
+
+    def isDef(self):
+        '''check if this is class definition
+        '''
+        if self.lineString().find('def ') != -1:
+            return True
+        return False
+
+    def _parseNameDef(self, lineString):
+        log('lineString=%s' % lineString, 6)
+        cutoutFirstPart = lineString.strip().split(' ')[1]
+        cutoutLastPart = cutoutFirstPart.split('(')[0]
+        defName = cutoutLastPart.strip()
+        return defName
+
+    def getterUp(self):
+        '''return the down setter def if exists
+        '''
+        view = self.view()
+        isDef = self.isDef()
+
+        if not isDef:
+            return None
+
+        isSiblingGet = False
+        siblingUp = self.siblingUp()
+
+        if not siblingUp:
+            return None
+
+        region = self.region()
+        
+        lineString = view.substr( region )
+        log('lineString=%s' % lineString, 6)
+        name = self._parseNameDef(lineString)
+
+        if name.find("set") != -1:
+            name = name.replace("set", "")
+        else:
+            return None
+
+        siblingUpRegion = siblingUp.region()
+        lineString = view.substr( siblingUpRegion )
+        nameSibling = self._parseNameDef(lineString)
+
+        if nameSibling.lower() == "get" + name.lower() or nameSibling.lower() == name.lower():
+            isSiblingGet = True
+
+        if isSiblingGet and isDef:
+            return siblingUp
+
+    def setterDown(self):
+        '''return the down setter def if exists
+        '''
+        view = self.view()
+        isDef = self.isDef()
+
+        if not isDef:
+            return None
+
+        isSiblingSet = False
+        siblingDown = self.siblingDown()
+
+        if not siblingDown:
+            return None
+
+        region = self.region()
+        
+        lineString = view.substr( region )
+        log('lineString=%s' % lineString, 6)
+        name = self._parseNameDef(lineString)
+
+        if name.find("get") != -1:
+            name = name.replace("get", "")
+
+        siblingDownRegion = siblingDown.region()
+        lineString = view.substr( siblingDownRegion )
+        nameSibling = self._parseNameDef(lineString)
+
+        if nameSibling.lower() == "set" + name.lower():
+            isSiblingSet = True
+
+        if isSiblingSet and isDef:
+            return siblingDown
+
+    def foldGetterSetterRegions(self):
+        '''return needed regions to fold 
+        '''
+        view = self.view()
+        regions = []
+        region = self.region()
+        lineString = view.substr( region )
+        nameDef = self._parseNameDef(lineString)
+
+        startPoint = region.a + self.lineString().find('def ')
+        endPoint = startPoint + 4
+        regions.append( sublime.Region(startPoint, endPoint) )
+
+        startPoint = region.a + (self.lineString().find(nameDef) + len(nameDef) )
+        endPoint = self.siblingDown().contentRegion().b
+        regions.append( sublime.Region(startPoint, endPoint) )
+
+        return regions
+
+class FLineUtils(object):
+    """docstring for FLineUtils"""
+    def __init__(self, view):
+        super(FLineUtils, self).__init__()
+        self._view = view
+        self._lineClass = FLine
+
+    def view(self):
+        ''' get self._view
+        '''
+        return self._view
+    
+    def setView(self, value):
+        ''' set self._view
+        '''
+        self._view = value
+
+    def lineClass(self):
+        '''get lineClass
+        '''
+        return self._lineClass
+    
+    def setLineClass(self, value):
+        '''set lineClass
+        '''
+        self._lineClass = value
+
+    def lines(self):
+        '''return all lines in given view
+        '''
+        view = self.view()
+        totalRegion = sublime.Region( 0, view.size() )
+        lineRegions = view.lines(totalRegion)
+        lines = []
+
+        for lineRegion in lineRegions:
+            line = FLine(view, lineRegion)
+            lines.append(line)
+
+        return lines
+
+# sublime commands
 class FLineTextCommand(sublime_plugin.TextCommand):
     '''text command shared functionality
     '''
@@ -544,6 +714,7 @@ class FoldShowDocumentationCommand(FLineTextCommand):
 
 class FoldDeleteDoubleEmptyLinesCommand(FLineTextCommand):
     '''show all doc strings of selected lines
+    Still need to finish this
     '''
     def run(self, edit):
         log('FoldDeleteDoubleEmptyLines',1)
@@ -553,7 +724,7 @@ class FoldDeleteDoubleEmptyLinesCommand(FLineTextCommand):
         loop = True
         while loop:
             emptyFound = 0
-            lines = all_lines(view)
+            lines = FLineUtils(view).lines()
             for line in lines:
                 lineIsEmpty = line.isEmpty()
                 if lineIsEmpty:
@@ -740,6 +911,8 @@ class FoldNewSibling(FLineTextCommand):
             regions.append(region)
     
         self.selectRegions(regions)
+        # launch auto complete
+        view.run_command("auto_complete")
 
 class FoldGoToTopSibling(FLineTextCommand):
     '''go to the top sibling
@@ -805,8 +978,9 @@ class FoldFoldContent(FLineTextCommand):
         log('FoldFoldContent',1)
         view = self.view
         sel = view.sel()
-        foldRegions = []
+        
         regions = []
+        blackListRegions = []   # all regions that do not need actions anymore
         for region in ( view.sel()):
             line = FLine(view, region)
 
@@ -818,14 +992,47 @@ class FoldFoldContent(FLineTextCommand):
             if line is None:
                 continue
 
-            contentRegion = line.contentRegion()
+            # get full region of line
+            lineRegion = view.line( line.region() )
+            line = FLine(view, lineRegion )
 
-            if contentRegion:
-                foldRegions.append(contentRegion)
-                hasFolded = view.fold(contentRegion)
+            if lineRegion in blackListRegions:
+                continue
+
+            # getter setter folding
+            pythonLine = FPythonLine()
+            pythonLine.setData(line.data() )
+            setterDown = pythonLine.setterDown()
+            getterUp = pythonLine.getterUp()
+
+            if setterDown and fold_getters_setters():
+                # if it has a setter down
+                blackListRegions.append( setterDown.region() )
+                contentRegions = pythonLine.foldGetterSetterRegions()
+            elif getterUp and fold_getters_setters():
+                # if it has a getter up
+                getterUpPythonLine = FPythonLine()
+                getterUpPythonLine.setData(getterUp.data() )
+                blackListRegions.append( getterUp.region() )
+                contentRegions = getterUpPythonLine.foldGetterSetterRegions()
+
+                # getter will take over the final result
+                line = getterUpPythonLine
+            else:
+                # default content region
+                contentRegions = [line.contentRegion()]
+
+            if contentRegions:
+                totalAllreadyFolded = True
+
+                for contentRegion in contentRegions:
+                    hasFolded = view.fold(contentRegion)
+                    if hasFolded:
+                        totalAllreadyFolded = False
+
 
                 # if can not fold, go to parent
-                if hasFolded is False:
+                if totalAllreadyFolded:
                     parentLine = line.parent()
                     if parentLine:
                         line = parentLine
@@ -833,7 +1040,7 @@ class FoldFoldContent(FLineTextCommand):
                 if line:
                     regions.append( line.goToRegion() )
 
-        # view.fold(foldRegions)
+        
         self.selectRegions(regions)
 
 class FoldFoldDepth(FLineTextCommand):
@@ -924,12 +1131,33 @@ class FoldUnfoldContent(FLineTextCommand):
         sel = view.sel()
         foldRegions = []
         lines = []
+        extraRegionsToSelect = []
+
         for region in ( view.sel()):
             line = FLine(view, region)
             lines.append(line)
-            contentRegion = line.contentRegion()
-            if contentRegion:
-                foldRegions.append(contentRegion)
+
+            # getter setter folding
+            pythonLine = FPythonLine()
+
+            pythonLine.setData(line.data() )
+            contentRegions = []
+
+            # get full region of line
+            pythonLine = FPythonLine(view, view.line( region ) )
+
+            setterDown = pythonLine.setterDown()
+            getterUp = pythonLine.getterUp()
+            if setterDown and fold_getters_setters():
+                contentRegions = pythonLine.foldGetterSetterRegions()
+                # extraRegionsToSelect.append(setterDown.goToRegion() )
+            elif getterUp and fold_getters_setters():
+                getterUpPythonLine = FPythonLine(view, getterUp.region() )
+                contentRegions = getterUpPythonLine.foldGetterSetterRegions()
+            else:
+                contentRegions = [line.contentRegion()]
+            if contentRegions:
+                foldRegions += contentRegions
 
         hasUnfolded = view.unfold(foldRegions)
 
@@ -956,6 +1184,9 @@ class FoldUnfoldContent(FLineTextCommand):
 
                 for region in goToRegions:
                     sel.add(region)
+        else:
+            if len(extraRegionsToSelect) > 0:
+                view.sel().add_all(extraRegionsToSelect)
 
 class FoldGoToChildren(FLineTextCommand):
     '''selet all children of selected regions
@@ -1057,3 +1288,5 @@ class PythonlineCommand(FLineTextCommand):
 # sublime.log_commands(False)
 # path = '/home/sven.fr'
 # sublime.active_window().run_command('prompt_add_folder', {"dirs" : [path] } )
+
+# view = sublime.active_window().active_view()
