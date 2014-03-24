@@ -13,6 +13,13 @@ instant fold all methods, leaving docstrings visible, extending your current cod
 * Documentation folding, folding all python code except documentation strings
 * Extending code, creating new siblings putting keywords correct so Sublime autocomplete can take over the rest
 
+## Installation
+* Use [Sublime Package Control](http://wbond.net/sublime_packages/package_control "Sublime Package Control")
+* `ctrl+shft+p` then select `Package Control: Install Package`
+* install `Fold Python`
+
+Alternatively, download the package from [GitHub](https://github.com/svenfraeys/SublimeFoldPython "SublimeFoldPython") into your `Packages` folder
+
 ## Key Bindings
 keycombo to use : Ctrl+Alt+Shift+Key
 
