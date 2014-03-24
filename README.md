@@ -7,6 +7,14 @@ instant fold all methods, leaving docstrings visible, extending your current cod
 
 More information in how to use will come soon
 
+## Features
+* Folding code, fold and unfold contents where the cursor exists
+* Smart selecting, selecting needed pieces of code
+* Smart folding getters and setters, getters and setters will be folded as one
+* Easy navigation trough code structure : Go upwards in code blocks, go inside children
+* Documentation folding, folding all python code except documentation strings
+* Extending code, creating new siblings putting keywords correct so Sublime autocomplete can take over the rest
+
 ## Key Bindings
 keycombo to use : Ctrl+Alt+Shift+Key
 
