@@ -1,11 +1,13 @@
 # Fold Python
 #### Intelligent Folding System for Python
 
+## Intro
 You can fold, navigate, extend python code in a very fast and easy way.
 instant fold all methods, leaving docstrings visible, extending your current code.
 
 More information in how to use will come soon
 
+## Key Bindings
 keycombo to use : Ctrl+Alt+Shift+Key
 
 Ctrl+Alt+Shift+Up : Move up in code / Go to parent
