@@ -1,7 +1,5 @@
-SublimeFold
-===========
-
-Intelligent Folding System for Python.
+# Fold Python
+### Intelligent Folding System for Python
 
 You can fold, navigate, extend python code in a very fast and easy way.
 instant fold all methods, leaving docstrings visible, extending your current code.
