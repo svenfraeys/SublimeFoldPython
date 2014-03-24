@@ -21,6 +21,7 @@ instant fold all methods, leaving docstrings visible, extending your current cod
 Alternatively, download the package from [GitHub](https://github.com/svenfraeys/SublimeFoldPython "SublimeFoldPython") into your `Packages` folder
 
 ## Key Bindings
+Fold Python is only accesible and useful when used trough shortcuts.
 All key bindings are using following pattern `Ctrl+Alt+Shift+Key`
 
 * Ctrl+Alt+Shift+Up : Move up in code / Go to parent
