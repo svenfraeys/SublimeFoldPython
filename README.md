@@ -22,6 +22,7 @@ Alternatively, download the package from [GitHub](https://github.com/svenfraeys/
 
 ## Key Bindings
 Fold Python is only accesible and useful when used trough shortcuts.
+
 All key bindings are using following pattern `Ctrl+Alt+Shift+Key`
 
 * Ctrl+Alt+Shift+Up : Move up in code / Go to parent
