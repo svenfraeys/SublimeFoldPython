@@ -19,5 +19,5 @@
     { "keys": ["ctrl+shift+alt+2"], "command": "fold_fold_depth", "args": {"depth": 2} },
     { "keys": ["ctrl+shift+alt+keypad2"], "command": "fold_fold_depth", "args": {"depth": 2} },
     { "keys": ["ctrl+shift+alt+3"], "command": "fold_fold_depth", "args": {"depth": 3} },
-    { "keys": ["ctrl+shift+alt+keypad3"], "command": "fold_fold_depth", "args": {"depth": 3} },
+    { "keys": ["ctrl+shift+alt+keypad3"], "command": "fold_fold_depth", "args": {"depth": 3} }
 ]
