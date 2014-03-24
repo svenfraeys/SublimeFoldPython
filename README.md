@@ -35,4 +35,4 @@ keycombo to use : Ctrl+Alt+Shift+Key
 ## Settings
 you can edit Key Binding and Settings in `Preferences > Package Settings > Fold Python` 
 
-`fold_getters_setters` : fold getter and matching setter together as one
+* fold_getters_setters : fold getter and matching setter together as one
