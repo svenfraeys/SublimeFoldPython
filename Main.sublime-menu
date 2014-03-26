@@ -17,7 +17,7 @@
 								"caption": "Settings – Default",
 								"command": "open_file",
 								"args": {
-									"file": "${packages}/SublimeFoldPython/FoldPython.sublime-settings"
+									"file": "${packages}/Fold Python/FoldPython.sublime-settings"
 								}
 							},
 							{
@@ -33,7 +33,7 @@
 								"platform": "Linux",
 								"command": "open_file",
 								"args": {
-									"file": "${packages}/SublimeFoldPython/Default (Linux).sublime-keymap"
+									"file": "${packages}/Fold Python/Default (Linux).sublime-keymap"
 								}
 							},
 							{
@@ -41,7 +41,7 @@
 								"platform": "Windows",
 								"command": "open_file",
 								"args": {
-									"file": "${packages}/SublimeFoldPython/Default (Windows).sublime-keymap"
+									"file": "${packages}/Fold Python/Default (Windows).sublime-keymap"
 								}
 							},
 							{
@@ -49,7 +49,7 @@
 								"platform": "OSX",
 								"command": "open_file",
 								"args": {
-									"file": "${packages}/SublimeFoldPython/Default (OSX).sublime-keymap"
+									"file": "${packages}/Fold Python/Default (OSX).sublime-keymap"
 								}
 							}
 						]
