@@ -30,8 +30,8 @@ class FLine(object):
         '''initiates the line extracter
         '''
         self._tabString = None
-        self._view = view
-        self._region = region
+        self._view      = view
+        self._region    = region
 
         if view:
             tabSize = view.settings().get("tab_size")
@@ -47,8 +47,8 @@ class FLine(object):
         '''get data
         '''
         dataDict = {}
-        dataDict["view"] = self.view()
-        dataDict["region"] = self.region()
+        dataDict["view"]      = self.view()
+        dataDict["region"]    = self.region()
         dataDict["tabString"] = self.tabString()
         return dataDict
     
@@ -99,8 +99,8 @@ class FLine(object):
     def spaceDepth(self):
         '''return the depth of the selected line
         '''
-        view = self.view()
-        region = self.region()
+        view       = self.view()
+        region     = self.region()
         lineRegion = view.line(region)
         lineString = view.substr( lineRegion )
         log('lineString=%s' % lineString, 6)
@@ -116,13 +116,14 @@ class FLine(object):
     def tabDepth(self):
         '''return the dpeth of the selected line in tabs
         '''
-        view = self.view()
-        region = self.region()
+        view       = self.view()
+        region     = self.region()
         lineRegion = view.line(region)
         lineString = view.substr( lineRegion )
+        counter    = 0
+
         log('lineString=%s' % lineString, 6)
 
-        counter = 0
         for i in lineString.split('\t'):
             if i == '':
                 counter += 1
@@ -133,9 +134,8 @@ class FLine(object):
     def depth(self):
         '''return the depth of the region
         '''
-        view = self.view()
-
-        tabSize = view.settings().get("tab_size")
+        view         = self.view()
+        tabSize      = view.settings().get("tab_size")
         tabsToSpaces = view.settings().get("translate_tabs_to_spaces")
 
         if tabsToSpaces:
@@ -146,22 +146,20 @@ class FLine(object):
     def lineString(self):
         '''return the line as string
         '''
-        view = self.view()
-        region = self.region()
+        view       = self.view()
+        region     = self.region()
         lineRegion = view.line(region)
         return view.substr ( lineRegion )
 
     def goToRegion(self):
         '''return the region of the beginning of the line
         '''
-        view = self.view()
-
+        view   = self.view()
         region = self.region()
+
         lineRegion = view.line(region)
-        
         lineString = view.substr ( lineRegion )
         strippedLineString = lineString.strip()
-
         startOffset = lineString.find(strippedLineString)
         startRegion = sublime.Region( lineRegion.a + startOffset, lineRegion.a + startOffset)
         return startRegion
@@ -169,9 +167,9 @@ class FLine(object):
     def lineDown(self):
         '''get the one line up
         '''
-        view = self.view()
-        region = self.region()
-        lineRegion = view.line(region)
+        view          = self.view()
+        region        = self.region()
+        lineRegion    = view.line(region)
         endLineBefore = lineRegion.b + 1
 
         maxRange = view.size()
@@ -200,11 +198,11 @@ class FLine(object):
     def grandChildren(self):
         '''return the grand child
         '''
-        depth = self.depth()
+        depth         = self.depth()
         linedownDepth = None
-        lineDown = self
-        loop = True
-        children = []
+        lineDown      = self
+        loop          = True
+        children      = []
 
         while loop:
             lineDown = lineDown.lineDown()
@@ -230,11 +228,11 @@ class FLine(object):
     def hasChildren(self):
         '''return if has children
         '''
-        depth = self.depth()
+        depth         = self.depth()
         linedownDepth = None
-        lineDown = self
-        loop = True
-        children = []
+        lineDown      = self
+        loop          = True
+        children      = []
 
         while loop:
             lineDown = lineDown.lineDown()
@@ -257,12 +255,11 @@ class FLine(object):
     def children(self):
         '''return the children
         '''
-        depth = self.depth()
-
+        depth         = self.depth()
         linedownDepth = None
-        lineDown = self
-        loop = True
-        children = []
+        lineDown      = self
+        loop          = True
+        children      = []
 
         while loop:
             lineDown = lineDown.lineDown()
@@ -285,8 +282,8 @@ class FLine(object):
     def contentRegion(self):
         '''return the region of the whole content.
         '''
-        children = self.grandChildren()
-        lastChild = None
+        children   = self.grandChildren()
+        lastChild  = None
         firstChild = None
 
         if len(children) == 0:
@@ -305,11 +302,11 @@ class FLine(object):
     def parent(self):
         '''return parent line
         '''
-        depth = self.depth()
+        depth       = self.depth()
         lineupDepth = None
-        lineUp = self
-        loop = True
-        parent = None
+        lineUp      = self
+        loop        = True
+        parent      = None
 
         while loop:
             lineUp = lineUp.lineUp()
@@ -330,11 +327,11 @@ class FLine(object):
     def siblingUp(self):
         '''return sibling upwards
         '''
-        depth = self.depth()
+        depth       = self.depth()
         lineupDepth = None
-        lineUp = self
-        loop = True
-        parent = None
+        lineUp      = self
+        loop        = True
+        parent      = None
 
         while loop:
             lineUp = lineUp.lineUp()
@@ -362,11 +359,11 @@ class FLine(object):
     def siblingDown(self):
         '''return sibling upwards
         '''
-        depth = self.depth()
+        depth       = self.depth()
         lineupDepth = None
-        lineDown = self
-        loop = True
-        parent = None
+        lineDown    = self
+        loop        = True
+        parent      = None
 
         while loop:
             lineDown = lineDown.lineDown()
@@ -409,8 +406,8 @@ class FLine(object):
     def siblingsDown(self):
         '''return all siblings down
         '''
-        loop = True
-        siblingDown = self
+        loop         = True
+        siblingDown  = self
         siblingDowns = []
         while loop:
             siblingDown = siblingDown.siblingDown()
@@ -434,11 +431,11 @@ class FLine(object):
     def adultDown(self):
         '''get the adult downwards
         '''
-        depth = self.depth()
+        depth       = self.depth()
         lineupDepth = None
-        lineDown = self
-        loop = True
-        parent = None
+        lineDown    = self
+        loop        = True
+        parent      = None
 
         while loop:
             lineDown = lineDown.lineDown()
@@ -459,17 +456,17 @@ class FLine(object):
     def documentationRegion(self):
         '''return the region of the docstring
         '''
-        view = self.view()
-        region = self.region()
-        start = None
-        end = None
-
-        lineDown = self.lineDown()
+        view           = self.view()
+        region         = self.region()
+        start          = None
+        end            = None
+        lineDown       = self.lineDown()
         lineDownRegion = lineDown.region()
         lineDownString = view.substr( lineDownRegion )
-        docSign = "'''"
+        docSign        = "'''"
 
         splittedString = lineDownString.split(docSign)
+
         if len(splittedString) == 1:
             docSign = '"""'
             splittedString = lineDownString.split(docSign)
@@ -503,8 +500,8 @@ class FPythonLine(FLine):
     """a python line with smarter analyze function of its task in the file"""
 
     # constants
-    TYPE_CLASS = "type_class"
-    TYPE_EMPTY = "type_empty"
+    TYPE_CLASS      = "type_class"
+    TYPE_EMPTY      = "type_empty"
     TYPE_DEFINITION = "type_definition"
 
     # methods
@@ -542,14 +539,14 @@ class FPythonLine(FLine):
     def getterUp(self):
         '''return the down setter def if exists
         '''
-        view = self.view()
         isDef = self.isDef()
 
         if not isDef:
             return None
 
         isSiblingGet = False
-        siblingUp = self.siblingUp()
+        view         = self.view()
+        siblingUp    = self.siblingUp()
 
         if not siblingUp:
             return None
@@ -578,13 +575,13 @@ class FPythonLine(FLine):
     def setterDown(self):
         '''return the down setter def if exists
         '''
-        view = self.view()
-        isDef = self.isDef()
+        view         = self.view()
+        isDef        = self.isDef()
+        isSiblingSet = False
 
         if not isDef:
             return None
 
-        isSiblingSet = False
         siblingDown = self.siblingDown()
 
         if not siblingDown:
@@ -610,7 +607,7 @@ class FPythonLine(FLine):
             return siblingDown
 
     def foldGetterSetterRegions(self):
-        '''return needed regions to fold 
+        '''return needd regions to fold 
         '''
         view = self.view()
         regions = []
