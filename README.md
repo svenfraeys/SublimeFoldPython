@@ -43,6 +43,11 @@ All key bindings are using following pattern `Ctrl+Alt+Shift+Key`
 * Ctrl+Alt+Shift+2 : Fold to depth 2 starting from selection
 * Ctrl+Alt+Shift+N : Create a new sibling starting from selection
 
+## What's new?
+25 march 2014
+* Folding Getters and Setters as one
+* Create new sibling will apply an autocomplete command
+
 ## Settings
 you can edit Key Binding and Settings in `Preferences > Package Settings > Fold Python` 
 
