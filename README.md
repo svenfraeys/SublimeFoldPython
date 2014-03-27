@@ -1,6 +1,8 @@
 # Fold Python
 #### Intelligent Folding System for Python
 
+![alt tag](https://dl.dropboxusercontent.com/u/1652825/code/sublime/foldpython/foldpython_basics.gif)
+
 ## Intro
 You can fold, navigate, extend python code in a very fast and easy way.
 instant fold all methods, leaving docstrings visible, extending your current code.
