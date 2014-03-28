@@ -28,5 +28,13 @@
             "file": "${packages}/Fold Python/Default (Linux).sublime-keymap",
             "platform": "Linux"
         }
+    },
+    {
+        "caption": "Fold Python : Go To Import",
+        "command": "fold_go_to_import"
+    },
+    {
+        "caption": "Fold Python : Go To Visible ...",
+        "command": "fold_go_to_quick_panel"
     }
 ]

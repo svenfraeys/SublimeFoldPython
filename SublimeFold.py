@@ -149,6 +149,7 @@ class FLine(object):
         view       = self.view()
         region     = self.region()
         lineRegion = view.line(region)
+        log('lineRegion=%s' % lineRegion, 6)
         return view.substr ( lineRegion )
 
     def goToRegion(self):
@@ -1264,6 +1265,77 @@ class FoldSelectZeroParentsCommand(FLineTextCommand):
             if len(regions) > 0:
                 view.show(regions[0])
 
+class FoldGoToImport(FLineTextCommand):
+    '''go to import section
+    '''
+    def run(self, edit):
+        view = self.view
+        sel = view.sel()
+        lineDown = FLine( view, sublime.Region(0,0) )
+        loop = True
+        toSelect = []
+        while loop:
+            if lineDown is None:
+                loop = False
+                break
+
+            lineDown = lineDown.lineDown()
+
+            if lineDown.lineString().find("import ") != -1:
+                startRegion = lineDown.goToRegion()
+                self.selectRegions([startRegion])
+                break
+
+class FoldGoToQuickPanel(FLineTextCommand):
+    '''show a quick panel
+    '''
+    visibleParents = []
+    def handleSelect(self, index):
+        log('index=%s' % index, 6)
+
+        if index == -1:
+            return
+
+        
+        selectedLine = self.visibleParents[index]
+
+        self.selectRegions( [selectedLine.goToRegion()] )
+
+
+    def run(self, edit):
+        view = self.view
+        visibleRegion = view.visible_region()
+        log('visibleRegion=%s' % visibleRegion, 6)
+        line = view.line(visibleRegion.a)
+
+        # firstLineRegion = sublime.Region(line)
+        # log('firstLineRegion=%s' % firstLineRegion, 6)
+
+        lineDown = FLine( view, line )
+
+        loop = True
+        toSelect = []
+
+        visibleParentLines = []
+        while loop:
+            if lineDown is None:
+                loop = False
+                break
+
+            if not visibleRegion.contains( lineDown.region() ):
+                loop = False
+                break
+
+            if len(lineDown.children()) > 0 and not lineDown.isEmpty():
+                log(lineDown.lineString(),3)
+                visibleParentLines.append(lineDown)
+
+            lineDown = lineDown.lineDown()
+
+        optionList = [line.lineString() for line in visibleParentLines]
+        self.visibleParents = visibleParentLines
+        sublime.active_window().show_quick_panel(optionList, self.handleSelect)
+    
 class PythonlineCommand(FLineTextCommand):
     '''test command
     '''
@@ -1272,6 +1344,7 @@ class PythonlineCommand(FLineTextCommand):
 
         # return
         # for attr in dir(view): log('view.%s' % (attr) , 6)
+
         for region in ( view.sel()):
             line = FLine(view, region)
             lineD = line.children()
