@@ -21,5 +21,7 @@
     { "keys": ["ctrl+shift+alt+3"], "command": "fold_fold_depth", "args": {"depth": 3} },
     { "keys": ["ctrl+shift+alt+keypad3"], "command": "fold_fold_depth", "args": {"depth": 3} },
     { "keys": ["ctrl+shift+alt+i"], "command": "fold_go_to_import" },
-    { "keys": ["ctrl+shift+alt+g"], "command": "fold_go_to_quick_panel" }
+    { "keys": ["ctrl+shift+alt+g"], "command": "fold_go_to_quick_panel" },
+    { "keys": ["ctrl+shift+alt+s"], "command": "fold_siblings" },
+    { "keys": ["ctrl+shift+alt+v"], "command": "fold_siblings_inverse" }
 ]
