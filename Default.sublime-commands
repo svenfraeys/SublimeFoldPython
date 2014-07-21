@@ -30,11 +30,83 @@
         }
     },
     {
-        "caption": "Fold Python : Go To Import",
-        "command": "fold_go_to_import"
+        "caption" : "Fold Python : go to sibling up",
+        "command" : "fold_go_to_sibling_up"
     },
     {
-        "caption": "Fold Python : Go To Visible ...",
-        "command": "fold_go_to_quick_panel"
+        "caption" : "Fold Python : go to sibling down",
+        "command" : "fold_go_to_sibling_down"
+    },
+    {
+        "caption" : "Fold Python : fold content",
+        "command" : "fold_fold_content"
+    },
+    {
+        "caption" : "Fold Python : unfold content",
+        "command" : "fold_unfold_content"
+    },
+    {
+        "caption" : "Fold Python : go to parent",
+        "command" : "fold_go_to_parent"
+    },
+    {
+        "caption" : "Fold Python : go to children",
+        "command" : "fold_go_to_children"
+    },
+    {
+        "caption" : "Fold Python : go to top sibling",
+        "command" : "fold_go_to_top_sibling"
+    },
+    {
+        "caption" : "Fold Python : go to bottom sibling",
+        "command" : "fold_go_to_bottom_sibling"
+    },
+    {
+        "caption" : "Fold Python : go to siblings",
+        "command" : "fold_go_to_siblings"
+    },
+    {
+        "caption" : "Fold Python : enter content",
+        "command" : "fold_enter_content"
+    },
+    {
+        "caption" : "Fold Python : go to siblings inverse",
+        "command" : "fold_go_to_siblings_inverse"
+    },
+    {
+        "caption" : "Fold Python : new sibling",
+        "command" : "fold_new_sibling"
+    },
+    {
+        "caption" : "Fold Python : show documentation",
+        "command" : "fold_show_documentation"
+    },
+    {
+        "caption" : "Fold Python : go to import",
+        "command" : "fold_go_to_import"
+    },
+    {
+        "caption" : "Fold Python : go to visible...",
+        "command" : "fold_go_to_quick_panel"
+    },
+    {
+        "caption" : "Fold Python : fold depth 0",
+        "command" : "fold_fold_depth",
+        "args": {"depth": 0}
+    },
+    {
+        "caption" : "Fold Python : fold depth 1",
+        "command" : "fold_fold_depth",
+        "args": {"depth": 1}
+    },
+    {
+        "caption" : "Fold Python : fold depth 2",
+        "command" : "fold_fold_depth",
+        "args": {"depth": 2}
+    },
+    {
+        "caption" : "Fold Python : fold depth 3",
+        "command" : "fold_fold_depth",
+        "args": {"depth": 3}
     }
 ]
