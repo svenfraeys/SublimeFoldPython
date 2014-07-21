@@ -51,8 +51,13 @@ Key binding are now also connected with `Ctrl+K, Ctrl+Key` to improve usability
 A list of commands are added to access using `Ctrl+Shift+P`.
 all commands start with "Fold Python : command name"
 
-
 ## What's new?
+
+21 july 2014
+
+* added shortcut
+* bug fixing
+* added fold python commands in `Ctrl+Shift+P`
 
 26 march 2014
 
