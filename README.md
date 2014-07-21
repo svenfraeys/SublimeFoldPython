@@ -26,6 +26,8 @@ Alternatively, download the package from [GitHub](https://github.com/svenfraeys/
 Fold Python is only accesible and useful when used trough shortcuts.
 
 All key bindings are using following pattern `Ctrl+Alt+Shift+Key`
+OR
+Key binding are now also connected with `Ctrl+K, Ctrl+Key` to improve usability
 
 * `Ctrl+Alt+Shift+Up` : Move up in code / Go to parent
 * `Ctrl+Alt+Shift+Down` : Move down in code / Go to adult
@@ -44,6 +46,11 @@ All key bindings are using following pattern `Ctrl+Alt+Shift+Key`
 * `Ctrl+Alt+Shift+N` : Create a new sibling starting from selection
 * `Ctrl+Alt+Shift+I` : Go to import section of code
 * `Ctrl+Alt+Shift+G` : Show a list of all items in visible region. This way you can easily jump to a section in your view
+
+## Commands
+A list of commands are added to access using `Ctrl+Shift+P`.
+all commands start with "Fold Python : command name"
+
 
 ## What's new?
 
