@@ -46,6 +46,8 @@ Key binding are now also connected with `Ctrl+K, Ctrl+Key` to improve usability
 * `Ctrl+Alt+Shift+N` : Create a new sibling starting from selection
 * `Ctrl+Alt+Shift+I` : Go to import section of code
 * `Ctrl+Alt+Shift+G` : Show a list of all items in visible region. This way you can easily jump to a section in your view
+* `Ctrl+Alt+Shift+S` : Collapse all siblings including current cursors
+* `Ctrl+Alt+Shift+V` : Collapse all siblings not including current cursors
 
 ## Commands
 A list of commands are added to access using `Ctrl+Shift+P`.
@@ -74,6 +76,10 @@ you can edit Key Binding and Settings in `Preferences > Package Settings > Fold 
 
 * fold_getters_setters : fold getter and matching setter together as one
 
+
+## Contributors
+People that helped me to improve this addon !
+* duqcyxwd
 
 ## Todo
 * change shortcuts to a more usable shortcut list
