@@ -9,6 +9,7 @@
 ############
 import sublime
 import sublime_plugin
+import sys
 
 from .CodeManipulator import *
 # from .CodeManipulator import *
@@ -113,7 +114,8 @@ class FoldGoToSiblingUpCommand(FLineTextCommand):
                 # go back to original
                 regions.append(region)
 
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
         
 class FoldGoToSiblingDownCommand(FLineTextCommand):
     '''go one sibling down, if no sibling go to adult
@@ -130,8 +132,6 @@ class FoldGoToSiblingDownCommand(FLineTextCommand):
             if siblingDown is None:
                 siblingDown = line.adultDown()
 
-
-
             log(siblingDown,1)
             
             if siblingDown:
@@ -141,7 +141,8 @@ class FoldGoToSiblingDownCommand(FLineTextCommand):
                 # go back to original
                 regions.append(region)
 
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
 
 class FoldGoToSiblingsInverseCommand(FLineTextCommand):
     '''select all the invert siblings
@@ -174,7 +175,8 @@ class FoldGoToSiblingsInverseCommand(FLineTextCommand):
                         regions.append( siblingGoToRegion )
 
         # apply selection
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
 
 class FoldGoToSiblingsCommand(FLineTextCommand):
     '''select all siblings and itself
@@ -191,9 +193,9 @@ class FoldGoToSiblingsCommand(FLineTextCommand):
             
             siblings = line.siblings()
 
-            
-
             if len(siblings) > 0:
+                sublime.status_message(str(len(siblings)))
+                sys.stderr.write("len(siblings): " + str(len(siblings)))
                 # add each region of the siblign
                 for sibling in siblings:
                     regions.append( sibling.goToRegion() )
@@ -203,7 +205,172 @@ class FoldGoToSiblingsCommand(FLineTextCommand):
                 regions.append(line.goToRegion() )
 
         # apply selection
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
+
+class FoldSiblingsInverseCommand(FLineTextCommand):
+    '''select all the invert siblings
+    '''
+    def run(self, edit):
+        log('FoldGoToSiblingsInverseCommand',1)
+        view = self.view
+        sel = view.sel()
+        regions = []
+
+        # loop regions
+        selectRegions = view.sel()
+        for region in selectRegions:
+            line = FLine(view, region)
+            siblings = line.siblings()
+
+            if len(siblings) > 0:
+                # add each region of the siblign
+                for sibling in siblings:
+                    siblingGoToRegion = sibling.goToRegion()
+                    add = True
+                    for region in selectRegions:
+                    # todo : how to identify lines
+            # lineRegion = view.line( line.region() )
+
+                        if region == siblingGoToRegion:
+                            add = False
+                    if add:
+                        regions.append( siblingGoToRegion )
+            else:
+                sys.stderr.write("No siblings, level up\n")
+                parentLine = line.parent()
+                if parentLine:
+                    for sibling in parentLine.siblings():
+                        regions.append(sibling.goToRegion())
+
+        # start folding
+        blackListRegions = []   # all regions that do not need actions anymore
+        for region in (regions):
+            line = FLine(view, region)
+
+            # go for parent if active line does not have children
+            if not line.hasChildren():
+                line = line.parent()
+            if line is None:
+                continue
+            # get full region of line
+            lineRegion = view.line( line.region() )
+            line = FLine(view, lineRegion )
+
+            if lineRegion in blackListRegions:
+                continue
+
+            # getter setter folding
+            pythonLine = FPythonLine()
+            pythonLine.setData(line.data() )
+            setterDown = pythonLine.setterDown()
+            getterUp = pythonLine.getterUp()
+
+            if setterDown and fold_getters_setters():
+                # if it has a setter down
+                blackListRegions.append( setterDown.region() )
+                contentRegions = pythonLine.foldGetterSetterRegions()
+            elif getterUp and fold_getters_setters():
+                # if it has a getter up
+                getterUpPythonLine = FPythonLine()
+                getterUpPythonLine.setData(getterUp.data() )
+                blackListRegions.append( getterUp.region() )
+                contentRegions = getterUpPythonLine.foldGetterSetterRegions()
+
+                # getter will take over the final result
+                line = getterUpPythonLine
+            else:
+                # default content region
+                contentRegions = [line.contentRegion()]
+
+            if contentRegions:
+                totalAllreadyFolded = True
+
+                for contentRegion in contentRegions:
+                    hasFolded = view.fold(contentRegion)
+                    if hasFolded:
+                        totalAllreadyFolded = False
+
+class FoldSiblingsCommand(FLineTextCommand):
+    '''select all siblings and itself
+    '''
+    def run(self, edit):
+        log('FoldGoToParent',1)
+        view = self.view
+        sel = view.sel()
+        regions = []
+
+        for region in ( view.sel()):
+            line = FLine(view, region)
+            siblings = line.siblings()
+
+            if len(siblings) > 0:
+                sublime.status_message(str(len(siblings)))
+                sys.stderr.write("len(siblings): " + str(len(siblings)))
+                # add each region of the siblign
+                for sibling in siblings:
+                    regions.append( sibling.goToRegion() )
+
+            # if the current has childs also add it
+            if line.hasChildren():
+                regions.append(line.goToRegion())
+
+            if len(siblings) == 0 and not line.hasChildren():
+                sys.stderr.write("No siblings, level up\n")
+                parentLine = line.parent()
+                if parentLine:
+                    for sibling in parentLine.siblings():
+                        regions.append(sibling.goToRegion())
+                    if parentLine.hasChildren():
+                        regions.append(line.goToRegion())
+
+        # start folding
+        blackListRegions = []   # all regions that do not need actions anymore
+        for region in (regions):
+            line = FLine(view, region)
+
+            # go for parent if active line does not have children
+            if not line.hasChildren():
+                line = line.parent()
+            if line is None:
+                continue
+            # get full region of line
+            lineRegion = view.line( line.region() )
+            line = FLine(view, lineRegion )
+
+            if lineRegion in blackListRegions:
+                continue
+
+            # getter setter folding
+            pythonLine = FPythonLine()
+            pythonLine.setData(line.data() )
+            setterDown = pythonLine.setterDown()
+            getterUp = pythonLine.getterUp()
+
+            if setterDown and fold_getters_setters():
+                # if it has a setter down
+                blackListRegions.append( setterDown.region() )
+                contentRegions = pythonLine.foldGetterSetterRegions()
+            elif getterUp and fold_getters_setters():
+                # if it has a getter up
+                getterUpPythonLine = FPythonLine()
+                getterUpPythonLine.setData(getterUp.data() )
+                blackListRegions.append( getterUp.region() )
+                contentRegions = getterUpPythonLine.foldGetterSetterRegions()
+
+                # getter will take over the final result
+                line = getterUpPythonLine
+            else:
+                # default content region
+                contentRegions = [line.contentRegion()]
+
+            if contentRegions:
+                totalAllreadyFolded = True
+
+                for contentRegion in contentRegions:
+                    hasFolded = view.fold(contentRegion)
+                    if hasFolded:
+                        totalAllreadyFolded = False
 
 class FoldGoToParent(FLineTextCommand):
     '''select the parent parent
@@ -225,7 +392,8 @@ class FoldGoToParent(FLineTextCommand):
                 # go back to original
                 regions.append(region)
 
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
 
 class FoldNewSibling(FLineTextCommand):
     '''create a new sibling
@@ -271,7 +439,8 @@ class FoldNewSibling(FLineTextCommand):
             region = sublime.Region(endInsert, endInsert)
             regions.append(region)
     
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
         # launch auto complete
         view.run_command("auto_complete")
 
@@ -301,7 +470,8 @@ class FoldGoToTopSibling(FLineTextCommand):
                 # go back to original
                 regions.append(region)
 
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
 
 class FoldGoToBottomSibling(FLineTextCommand):
     '''go to the bottom sibling
@@ -330,7 +500,8 @@ class FoldGoToBottomSibling(FLineTextCommand):
                 # go back to original
                 regions.append(region)
 
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
         
 class FoldFoldContent(FLineTextCommand):
     '''fold the content
@@ -402,7 +573,8 @@ class FoldFoldContent(FLineTextCommand):
                     regions.append( line.goToRegion() )
 
         
-        self.selectRegions(regions)
+        if len(regions) > 0:
+            self.selectRegions(regions)
 
 class FoldFoldDepth(FLineTextCommand):
     '''show everything exept the given depth
@@ -721,7 +893,7 @@ class PythonlineCommand(FLineTextCommand):
 
 
 # sublime.active_window().active_view().run_command(cmd='Fold_go_to_sibling_down')
-# sublime.log_commands(False)
+# sublime.log_commands(True)
 # path = '/home/sven.fr'
 # sublime.active_window().run_command('prompt_add_folder', {"dirs" : [path] } )
 
